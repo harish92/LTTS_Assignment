@@ -12,6 +12,8 @@ import {
   MenuItem,
   Box,
 } from "@mui/material";
+import dayjs from "dayjs"; // For formatting dates
+
 
 const App = () => {
   const [file, setFile] = useState(null);
@@ -47,6 +49,7 @@ const App = () => {
       setCustomers(uniqueCustomers);
       setProducts(uniqueProducts);
       setTotalSales(totalSales);
+      setFile(null)
     } catch (error) {
       console.error("Error fetching data", error);
     }
@@ -83,52 +86,42 @@ const App = () => {
   }, {});
 
   const columns = [
-    {
-      field: "transactionId",
-      headerName: "Transaction ID",
-      width: 150,
-      sortable: true,
-    },
-    {
-      field: "customerName",
-      headerName: "Customer Name",
-      width: 200,
-      sortable: true,
-    },
-    { field: "product", headerName: "Product", width: 200, sortable: true },
-    {
-      field: "quantity",
-      headerName: "Quantity",
-      width: 120,
-      type: "number",
-      sortable: true,
-    },
+    { field: "transactionId", headerName: "Transaction ID", flex: 1, minWidth: 150 },
+    { field: "customerName", headerName: "Customer Name", flex: 1, minWidth: 150 },
+    { field: "product", headerName: "Product", flex: 1, minWidth: 150  },
+    { field: "quantity", headerName: "Quantity", type: "number", flex: 1, minWidth: 150  },
     {
       field: "price",
-      headerName: "Price",
-      width: 120,
-      valueFormatter: (params) => {
-        const value = params?.value;
-        if (value === undefined || value === null) return "$0.00"; // Handle missing values
-        return `$${parseFloat(String(value).replace(/[^\d.]/g, "")).toFixed(
-          2
-        )}`;
+      headerName: "Price (USD)",
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => `$${params.row.price.replace(" USD", "")}`,
+    },
+    {
+      field: "totalPrice",
+      headerName: "Total Sale (USD)",
+      flex: 1,
+      minWidth: 150, 
+      renderCell: (params) => {
+        if (!params?.row?.quantity || !params?.row?.price) return "$0"; // Handle missing data
+
+        // Extract numeric price value and remove "USD"
+        const price = parseFloat(params.row.price.replace(" USD", "").trim());
+
+        return `$${(params.row.quantity * price).toFixed(2)}`; // Display as currency
       },
     },
     {
       field: "date",
-      headerName: "Date",
-      width: 180,
-      valueFormatter: (params) => {
-        const value = params?.value;
-        if (!value) return "N/A"; // Handle missing values
-        return new Date(value).toLocaleDateString();
-      },
+      headerName: "Transaction Date",
+      flex: 1,
+      minWidth: 150, 
+      renderCell: (params) => dayjs(params.row.date).format("YYYY-MM-DD"),
     },
   ];
 
   return (
-    <Container>
+    <Container  maxWidth="xl" sx={{ maxWidth: "100%" }}>
       <Typography variant="h4" gutterBottom>
         CSV Upload & Sales Transactions
       </Typography>
@@ -180,15 +173,14 @@ const App = () => {
       </Box>
 
       {/* DataGrid */}
-      <DataGrid
-        rows={filteredTransactions}
-        columns={columns}
-        getRowId={(row) => row._id}
-        pageSize={5}
-        checkboxSelection
-        sortingOrder={["asc", "desc"]}
-        sx={{ mt: 3, height: 400 }}
-      />
+      <Box sx={{ width: "100%", overflowX: "auto" }}>
+        <DataGrid
+          rows={filteredTransactions.map((row, index) => ({ id: index, ...row }))}
+          columns={columns}
+          pageSize={10}
+          autoHeight
+        />
+      </Box>
 
       {/* Amount Spent by Each Customer */}
       <Typography variant="h6" mt={3}>
