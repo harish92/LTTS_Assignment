@@ -1,0 +1,9 @@
+﻿Transaction Id,Customer Name,Product,Quantity,Price,Date
+TX109,John Doe,MacBook Pro,3,3000 USD,2/11/25
+TX110,Hector M,Ipad Air,10,500 USD,2/12/25
+TX110,Charlie ,Router,2,250 USD,2/5/25
+TX9981,Bernard,iMac,1,1300 USD,2/5/25
+TX111,Charlie ,Router,2,250 USD,2/4/25
+TX319,Hector M,Router,2,250 USD,2/3/25
+TX129,Roseline K,Mac Studio,2,2500 USD,2/2/25
+TX110,Charlie ,MacBook Air,1,250 USD,2/2/25
