@@ -25,7 +25,7 @@ A full-stack web application for **uploading, processing, and visualizing sales 
 ### **1️⃣ Clone the Repository**
 ```sh
 git clone https://github.com/harish92/LTTS_Assignment.git
-cd sales-data-management
+cd LTTS_Assignment
 
 📌 Build & Run Containers
 
